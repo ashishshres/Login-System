@@ -14,10 +14,10 @@ if (loginBtn) {
 
 let password = document.querySelector("#password");
 let confirmPassword = document.querySelector("#confirm");
-let showPasswordCheckbox = document.querySelector("#show");
+let showPassword = document.querySelector("#show");
 
 // toggle password visibility
-showPasswordCheckbox.addEventListener("change", function () {
+showPassword.addEventListener("change", function () {
     if (this.checked) {
         password.setAttribute("type", "text");
         confirmPassword.setAttribute("type", "text");
