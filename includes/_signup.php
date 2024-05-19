@@ -15,8 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_num_rows($result) > 0) {
         $exists = true;
     } else {
-        if (($password == $confirmPassword) && !$exists) {
-            $sql = "INSERT INTO users (email, password) VALUES('$email', '$password')";
+        if (($password == $confirmPassword)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO users (email, password) VALUES('$email', '$hash')";
             $result = mysqli_query($conn, $sql);
             if ($result) {
                 $showAlert = true;
