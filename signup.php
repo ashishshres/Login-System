@@ -3,9 +3,9 @@ $showAlert = false;
 $showError = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include "./includes/_connect.php";
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $confirmPassword = $_POST["confirm"];
+    $email = htmlspecialchars($_POST["email"]);
+    $password = htmlspecialchars($_POST["password"]);
+    $confirmPassword = htmlspecialchars($_POST["confirm"]);
 
     if ($password == $confirmPassword) {
         $sql = "INSERT INTO users (email, password) VALUES('$email', '$password')";
