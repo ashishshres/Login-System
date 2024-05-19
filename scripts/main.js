@@ -1,14 +1,14 @@
 let signupBtn = document.querySelector(".signup");
 if (signupBtn) {
     signupBtn.addEventListener("click", () => {
-        window.location.href = "./signup.php";
+        window.location.href = "./_signup.php";
     });
 }
 
 let loginBtn = document.querySelector(".login");
 if (loginBtn) {
     loginBtn.addEventListener("click", () => {
-        window.location.href = "./login.php";
+        window.location.href = "./_login.php";
     });
 }
 
@@ -46,6 +46,6 @@ if (toastSignin) {
 let logoutBtn = document.querySelector(".logout");
 if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-        window.location.href = "./logout.php";
+        window.location.href = "./includes/_logout.php";
     });
 }
