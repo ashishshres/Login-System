@@ -1,3 +1,27 @@
+<?php
+$login = false;
+$showError = false;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include "./includes/_connect.php";
+    $email = htmlspecialchars($_POST["email"]);
+    $password = htmlspecialchars($_POST["password"]);
+
+    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+    $result = mysqli_query($conn, $sql);
+
+    $isFound = mysqli_num_rows($result);
+    if ($isFound == 1) {
+        $login = true;
+        session_start();
+        $_SESSION["loggedin"] = true;
+        $_SESSION["email"] = $email;
+        header("location: ./welcome.php");
+    } else {
+        $showError = true;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,20 +43,58 @@
             </div>
         </div>
     </nav>
+
+    <?php
+    if ($login) {
+        echo ' 
+    <div class="transition duration-300 ease-in-out toast-signin fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700"" role="alert">
+        <div class="flex p-4">
+            <div class="flex-shrink-0">
+                <svg class="flex-shrink-0 size-4 text-teal-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                </svg>
+            </div>
+            <div class="ms-3">
+                <p class="text-sm text-gray-700 dark:text-neutral-400">
+                    You are logged in.
+                </p>
+            </div>
+        </div>
+    </div>
+';
+    }
+    if ($showError) {
+        echo '<div class="transition duration-300 ease-in-out toast-signin fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert">
+        <div class="flex p-4">
+          <div class="flex-shrink-0">
+            <svg class="flex-shrink-0 size-4 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+            </svg>
+          </div>
+          <div class="ms-3">
+            <p class="text-sm text-gray-700 dark:text-neutral-400">
+              Invalid credentials.
+            </p>
+          </div>
+        </div>
+      </div>';
+    }
+    ?>
+
     <div class="w-full flex justify-center items-center flex-col gap-4 p-4 ">
         <h1 class="text-4xl">Login</h1>
-        <form class="w-full max-w-[300px] mx-auto">
+        <form class="w-full max-w-[300px] mx-auto" method="post">
             <div class="mb-5">
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                <input type="email" id="email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
             </div>
             <div class="mb-5">
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input type="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                <input type="password" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
             </div>
             <div class="flex items-start mb-5">
                 <div class="flex items-center h-5">
-                    <input id="show" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
+                    <input id="show" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" />
                 </div>
                 <label for="show" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Show password</label>
             </div>
