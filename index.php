@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// check if the user is loggedin
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) {
     header("location: ./includes/_login.php");
     exit;
