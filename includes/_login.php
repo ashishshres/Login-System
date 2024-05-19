@@ -1,18 +1,21 @@
 <?php
-$showAlert = false;
+$login = false;
 $showError = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include "./includes/_connect.php";
+    include "./_connect.php";
     $email = htmlspecialchars($_POST["email"]);
     $password = htmlspecialchars($_POST["password"]);
-    $confirmPassword = htmlspecialchars($_POST["confirm"]);
 
-    if ($password == $confirmPassword) {
-        $sql = "INSERT INTO users (email, password) VALUES('$email', '$password')";
-        $result = mysqli_query($conn, $sql);
-        if ($result) {
-            $showAlert = true;
-        }
+    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+    $result = mysqli_query($conn, $sql);
+
+    $isFound = mysqli_num_rows($result);
+    if ($isFound == 1) {
+        $login = true;
+        session_start();
+        $_SESSION["loggedin"] = true;
+        $_SESSION["email"] = $email;
+        header("location: ../index.php");
     } else {
         $showError = true;
     }
@@ -25,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up</title>
+    <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -36,15 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Login System</span>
             </a>
             <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-4">
-                <button type="button" class="login text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+                <button type="button" class="signup text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Sign up</button>
             </div>
         </div>
     </nav>
 
     <?php
-    if ($showAlert) {
+    if ($login) {
         echo ' 
-    <div class="transition duration-300 ease-in-out toast-signup fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700"" role="alert">
+    <div class="transition duration-300 ease-in-out toast-signin fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700"" role="alert">
         <div class="flex p-4">
             <div class="flex-shrink-0">
                 <svg class="flex-shrink-0 size-4 text-teal-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -53,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="ms-3">
                 <p class="text-sm text-gray-700 dark:text-neutral-400">
-                    Account created successfully.
+                    You are logged in.
                 </p>
             </div>
         </div>
@@ -61,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ';
     }
     if ($showError) {
-        echo '<div class="transition duration-300 ease-in-out toast-signup fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert">
+        echo '<div class="transition duration-300 ease-in-out toast-signin fixed top-20 right-0 mx-2 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert">
         <div class="flex p-4">
           <div class="flex-shrink-0">
             <svg class="flex-shrink-0 size-4 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -70,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
           <div class="ms-3">
             <p class="text-sm text-gray-700 dark:text-neutral-400">
-              Passwords do not match.
+              Invalid credentials.
             </p>
           </div>
         </div>
@@ -79,8 +82,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ?>
 
     <div class="w-full flex justify-center items-center flex-col gap-4 p-4 ">
-        <h1 class="text-4xl">Sign up</h1>
-        <form method="post" class="w-full max-w-[300px] mx-auto">
+        <h1 class="text-4xl">Login</h1>
+        <form class="w-full max-w-[300px] mx-auto" method="post">
             <div class="mb-5">
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                 <input type="email" id="email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
@@ -89,20 +92,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                 <input type="password" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
             </div>
-            <div class="mb-5">
-                <label for="confirm" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                <input type="password" id="confirm" name="confirm" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
-            </div>
             <div class="flex items-start mb-5">
                 <div class="flex items-center h-5">
                     <input id="show" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" />
                 </div>
                 <label for="show" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Show password</label>
             </div>
-            <button type="submit" name="signup" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Sign up</button>
+            <button type="submit" name="login" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
         </form>
     </div>
-    <script src="./scripts/main.js"></script>
+    <script src="../scripts/main.js"></script>
 </body>
 
 </html>
