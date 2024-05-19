@@ -17,17 +17,35 @@ let confirmPassword = document.querySelector("#confirm");
 let showPassword = document.querySelector("#show");
 
 // toggle password visibility
-showPassword.addEventListener("change", function () {
-    if (this.checked) {
-        password.setAttribute("type", "text");
-        confirmPassword.setAttribute("type", "text");
-    } else {
-        password.setAttribute("type", "password");
-        confirmPassword.setAttribute("type", "password");
-    }
-});
+if (showPassword) {
+    showPassword.addEventListener("change", function () {
+        if (this.checked) {
+            password.setAttribute("type", "text");
+            confirmPassword.setAttribute("type", "text");
+        } else {
+            password.setAttribute("type", "password");
+            confirmPassword.setAttribute("type", "password");
+        }
+    });
+}
 
 let toastSignup = document.querySelector(".toast-signup");
-setTimeout(() => {
-    toastSignup.style.opacity = 0;
-}, 5000);
+if (toastSignup) {
+    setTimeout(() => {
+        toastSignup.style.opacity = 0;
+    }, 5000);
+}
+
+let toastSignin = document.querySelector(".toast-signin");
+if (toastSignin) {
+    setTimeout(() => {
+        toastSignin.style.opacity = 0;
+    }, 5000);
+}
+
+let logoutBtn = document.querySelector(".logout");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        window.location.href = "./logout.php";
+    });
+}
