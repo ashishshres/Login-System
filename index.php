@@ -28,8 +28,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) {
             </div>
         </div>
     </nav>
-    <div>
-        <h1>Welcome <?= $_SESSION["email"] ?></h1>
+    <div class="p-3">
+        <h1 class="text-2xl">Welcome <?= $_SESSION["email"] ?>👋</h1>
     </div>
     <script src="./scripts/main.js"></script>
 </body>
