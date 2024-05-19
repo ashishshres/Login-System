@@ -6,14 +6,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = htmlspecialchars($_POST["password"]);
 
     // check for the email and password
-    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+    // $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+    $sql = "SELECT * FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     $isFound = mysqli_num_rows($result);
     if ($isFound == 1) {
-        session_start();
-        $_SESSION["loggedin"] = true;
-        $_SESSION["email"] = $email;
-        header("location: ../index.php");
+        while ($row = mysqli_fetch_assoc($result)) {
+            if (password_verify($password, $row["password"])) {
+                session_start();
+                $_SESSION["loggedin"] = true;
+                $_SESSION["email"] = $email;
+                header("location: ../index.php");
+            } else {
+                $showError = true;
+            }
+        }
     } else {
         $showError = true;
     }
